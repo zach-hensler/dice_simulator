@@ -59,7 +59,10 @@ const getMaxValue = (state: ApplicationState): number => {
     }
 }
 
-const buildHistogram = (state: ApplicationState): Histogram => {
+export const buildHistogram = (state: ApplicationState): Histogram => {
+    if (!state.diceValues) {
+        return [];
+    }
     const histogram: Record<Value, Count> = {}
     const minValue = getMinValue(state);
     const maxValue = getMaxValue(state);
