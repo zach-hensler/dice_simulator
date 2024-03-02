@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://zach-hensler.github.io/dice_sim",
+  "homepage": "https://zach-hensler.github.io/dice_simulator",
   "scripts": {
     "dev": "vite",
     "test": "vitest --run",
