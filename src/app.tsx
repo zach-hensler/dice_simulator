@@ -151,10 +151,12 @@ export const App: FunctionalComponent = () => {
                                 {setting.numberOfRolls} rolls, {setting.numberOfDice} dice, d{setting.sidesPerDice} {modifierText && "("+modifierText+")"}
                                 <span style={{
                                     marginLeft: '10px',
-                                    padding: '5px',
-                                    borderRadius: '10px',
-                                    backgroundColor: 'gray'
-                                }} onClick={() => dispatch(['deleteSetting', {settingToDelete: setting}])}>X</span>
+                                    padding: '5px 10px',
+                                    borderRadius: '20px',
+                                    backgroundColor: 'rgba(105, 105, 105, 0.4)'
+                                }} onClick={(event) => {
+                                    event.stopImmediatePropagation()
+                                    dispatch(['deleteSetting', {settingToDelete: setting}])}}>X</span>
                             </button>})}
                     </div>
                     {divider}
@@ -235,7 +237,7 @@ export const App: FunctionalComponent = () => {
             </div>
             {isNaN(expectedValue)
                 ? <></>
-                : <div>Expected Value: {expectedValue}</div>}
+                : <div>Expected Value: {expectedValue.toFixed(2)}</div>}
         </div>
     )
 }
