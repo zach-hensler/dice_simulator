@@ -4,10 +4,16 @@ export interface ApplicationState {
     numberOfRolls: number
     numberOfDice: number
     sidesPerDice: number
-    diceValues: Array<number>|null
+    diceValues: Array<number>
+    savedSettings: SavedSetting[]
 }
 
+export type SavedSetting = Omit<ApplicationState, "diceValues"|"savedSettings">
+
 export type ApplicationActions = [
+    ['loadSetting', payload: { settingToLoad: SavedSetting }],
+    ['saveSetting'],
+    ['deleteSetting', payload: { settingToDelete: SavedSetting }],
     ['updateModifiers', payload: { modifiers: Modifiers }],
     ['updateNumberOfRolls', payload: { numberOfRolls: number }],
     ['updateNumberOfDice', payload: { numberOfDice: number }],
