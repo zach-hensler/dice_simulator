@@ -144,14 +144,16 @@ export const App: FunctionalComponent = () => {
                         <div>Saved Settings: </div>
                         {state.savedSettings.map(setting => {
                             const modifierText = modifierPlaintextMap(setting.modifiers)
-                            return <button onClick={() => {
-                                dispatch(['loadSetting', {settingToLoad: setting}])
-                                dispatch(['generateDiceValues'])
+                            return <button
+                                style={{ margin: '10px' }}
+                                onClick={() => {
+                                    dispatch(['loadSetting', {settingToLoad: setting}])
+                                    dispatch(['generateDiceValues'])
                             }}>
                                 {setting.numberOfRolls} rolls, {setting.numberOfDice} dice, d{setting.sidesPerDice} {modifierText && "("+modifierText+")"}
                                 <span style={{
                                     marginLeft: '10px',
-                                    padding: '5px 10px',
+                                    padding: '5px 12px',
                                     borderRadius: '20px',
                                     backgroundColor: 'rgba(105, 105, 105, 0.4)'
                                 }} onClick={(event) => {
@@ -162,57 +164,62 @@ export const App: FunctionalComponent = () => {
                     {divider}
                 </> : <></>}
             {spacer}
-            <label for="numberOfRolls">Number of Rolls</label>
-            <input
-                id="numberOfRolls"
-                type="number"
-                value={state.numberOfRolls}
-                onChange={(event) =>
-                    dispatch(['updateNumberOfRolls', {numberOfRolls: event.currentTarget.valueAsNumber}])}/>
-            {spacer}
-            <label for="numberOfDice">Number of Dice</label>
-            <input
-                id="numberOfDice"
-                type="number"
-                value={state.numberOfDice}
-                onChange={(event) =>
-                    dispatch(['updateNumberOfDice', {numberOfDice: event.currentTarget.valueAsNumber}])}/>
-            {spacer}
-            <label for="sidesPerDice">Sides per Dice</label>
-            <input
-                id="sidesPerDice"
-                type="number"
-                value={state.sidesPerDice}
-                onChange={(event) =>
-                    dispatch(['updateSidesPerDice', {sidesPerDice: event.currentTarget.valueAsNumber}])}/>
-            {spacer}
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <span>
-                    <label for="chooseHighest">Choose Highest</label>
-                    <input
-                        id="chooseHighest"
-                        type="checkbox"
-                        checked={state.modifiers == 'chooseHighest'}
-                        onChange={(event) =>
-                            dispatch(['updateModifiers', {modifiers: event.currentTarget.checked ? 'chooseHighest' : 'none'}])}/>
-                </span>
+            <form onSubmit={event => {
+                event.preventDefault()
+                dispatch(['generateDiceValues'])
+            }}>
+                <label for="numberOfRolls">Number of Rolls</label>
+                <input
+                    id="numberOfRolls"
+                    type="number"
+                    value={state.numberOfRolls}
+                    onChange={(event) =>
+                        dispatch(['updateNumberOfRolls', {numberOfRolls: event.currentTarget.valueAsNumber}])}/>
                 {spacer}
-                <span>
-                    <label for="chooseLowest">Choose Lowest</label>
-                    <input
-                        id="chooseLowest"
-                        type="checkbox"
-                        checked={state.modifiers == 'chooseLowest'}
-                        onChange={(event) =>
-                            dispatch(['updateModifiers', {modifiers: event.currentTarget.checked ? 'chooseLowest' : 'none'}])}/>
-                </span>
-            </div>
-            {spacer}
-            <div style={{display: 'flex', justifyContent: 'center'}}>
-                <button onClick={() => dispatch(['saveSetting'])}>Save</button>
+                <label for="numberOfDice">Number of Dice</label>
+                <input
+                    id="numberOfDice"
+                    type="number"
+                    value={state.numberOfDice}
+                    onChange={(event) =>
+                        dispatch(['updateNumberOfDice', {numberOfDice: event.currentTarget.valueAsNumber}])}/>
                 {spacer}
-                <button onClick={() => dispatch(['generateDiceValues'])}>Roll Dice</button>
-            </div>
+                <label for="sidesPerDice">Sides per Dice</label>
+                <input
+                    id="sidesPerDice"
+                    type="number"
+                    value={state.sidesPerDice}
+                    onChange={(event) =>
+                        dispatch(['updateSidesPerDice', {sidesPerDice: event.currentTarget.valueAsNumber}])}/>
+                {spacer}
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <span>
+                        <label for="chooseHighest">Choose Highest</label>
+                        <input
+                            id="chooseHighest"
+                            type="checkbox"
+                            checked={state.modifiers == 'chooseHighest'}
+                            onChange={(event) =>
+                                dispatch(['updateModifiers', {modifiers: event.currentTarget.checked ? 'chooseHighest' : 'none'}])}/>
+                    </span>
+                    {spacer}
+                    <span>
+                        <label for="chooseLowest">Choose Lowest</label>
+                        <input
+                            id="chooseLowest"
+                            type="checkbox"
+                            checked={state.modifiers == 'chooseLowest'}
+                            onChange={(event) =>
+                                dispatch(['updateModifiers', {modifiers: event.currentTarget.checked ? 'chooseLowest' : 'none'}])}/>
+                    </span>
+                </div>
+                {spacer}
+                <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <button type="button" onClick={() => dispatch(['saveSetting'])}>Save</button>
+                    {spacer}
+                    <button type="submit">Roll Dice</button>
+                </div>
+            </form>
             {spacer}
             {divider}
             {spacer}
