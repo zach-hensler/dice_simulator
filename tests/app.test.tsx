@@ -4,6 +4,7 @@ import {buildHistogram} from "../src/app";
 
 describe('buildHistogram function from src/app.tsx', () => {
     const baseState: ApplicationState = {
+        histogramView: 'horizontal',
         modifiers: 'none',
         numberOfRolls: 1,
         numberOfDice: 1,
