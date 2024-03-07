@@ -30,7 +30,8 @@ body {
 }
 
 #app {
-  width: 100%;
+  width: 90%;
+  margin: 10px auto;
 }
 
 h1 {

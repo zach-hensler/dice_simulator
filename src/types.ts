@@ -1,5 +1,9 @@
 type Modifiers = 'none'|'chooseHighest'|'chooseLowest'
+type HistogramView = 'horizontal' | 'vertical'
+export type SavedSetting = Omit<ApplicationState, "diceValues"|"savedSettings"|"histogramView">
+
 export interface ApplicationState {
+    histogramView: HistogramView
     modifiers: Modifiers
     numberOfRolls: number
     numberOfDice: number
@@ -8,12 +12,11 @@ export interface ApplicationState {
     savedSettings: SavedSetting[]
 }
 
-export type SavedSetting = Omit<ApplicationState, "diceValues"|"savedSettings">
-
 export type ApplicationActions = [
     ['loadSetting', payload: { settingToLoad: SavedSetting }],
     ['saveSetting'],
     ['deleteSetting', payload: { settingToDelete: SavedSetting }],
+    ['updateHistogramView', payload: { histogramView: HistogramView }],
     ['updateModifiers', payload: { modifiers: Modifiers }],
     ['updateNumberOfRolls', payload: { numberOfRolls: number }],
     ['updateNumberOfDice', payload: { numberOfDice: number }],

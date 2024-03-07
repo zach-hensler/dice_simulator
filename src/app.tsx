@@ -9,6 +9,7 @@ import {
     stateToSavedSettings
 } from "./utilities.ts";
 import {useLocalStorage} from "./hooks/useLocalStorage.ts";
+import {HistogramView} from "./components/Histogram.tsx";
 
 const generateDiceValues = (state: ApplicationState): ApplicationState["diceValues"] => {
     if ([state.numberOfDice, state.numberOfDice].some(isNaN)) {
@@ -87,6 +88,7 @@ const getExpectedValue = (state: ApplicationState): number => {
 };
 
 const initialState = (savedSettings: ApplicationState["savedSettings"]): ApplicationState => ({
+    histogramView: 'horizontal',
     modifiers: 'none',
     numberOfRolls: 100,
     numberOfDice: 2,
@@ -114,6 +116,8 @@ export const App: FunctionalComponent = () => {
                 setLocalStorage(newSettings)
                 return { ...prevState, savedSettings: newSettings }
             }
+            case "updateHistogramView":
+                return { ...prevState, histogramView: payload.histogramView }
             case "updateModifiers":
                 return {...prevState, modifiers: payload.modifiers, diceValues: []}
             case "updateNumberOfRolls":
@@ -141,16 +145,17 @@ export const App: FunctionalComponent = () => {
                 ? <>
                     {spacer}
                     <div style={{display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center'}}>
-                        <div>Saved Settings: </div>
+                        <div>Saved Settings:</div>
                         {state.savedSettings.map(setting => {
                             const modifierText = modifierPlaintextMap(setting.modifiers)
                             return <button
-                                style={{ margin: '10px' }}
+                                style={{margin: '10px'}}
                                 onClick={() => {
                                     dispatch(['loadSetting', {settingToLoad: setting}])
                                     dispatch(['generateDiceValues'])
-                            }}>
-                                {setting.numberOfRolls} rolls, {setting.numberOfDice} dice, d{setting.sidesPerDice} {modifierText && "("+modifierText+")"}
+                                }}>
+                                {setting.numberOfRolls} rolls, {setting.numberOfDice} dice,
+                                d{setting.sidesPerDice} {modifierText && "(" + modifierText + ")"}
                                 <span style={{
                                     marginLeft: '10px',
                                     padding: '5px 12px',
@@ -158,8 +163,10 @@ export const App: FunctionalComponent = () => {
                                     backgroundColor: 'rgba(105, 105, 105, 0.4)'
                                 }} onClick={(event) => {
                                     event.stopImmediatePropagation()
-                                    dispatch(['deleteSetting', {settingToDelete: setting}])}}>X</span>
-                            </button>})}
+                                    dispatch(['deleteSetting', {settingToDelete: setting}])
+                                }}>X</span>
+                            </button>
+                        })}
                     </div>
                     {divider}
                 </> : <></>}
@@ -168,7 +175,7 @@ export const App: FunctionalComponent = () => {
                 event.preventDefault()
                 dispatch(['generateDiceValues'])
             }}>
-                <label for="numberOfRolls">Number of Rolls</label>
+                <label htmlFor="numberOfRolls">Number of Rolls</label>
                 <input
                     id="numberOfRolls"
                     type="number"
@@ -176,7 +183,7 @@ export const App: FunctionalComponent = () => {
                     onChange={(event) =>
                         dispatch(['updateNumberOfRolls', {numberOfRolls: event.currentTarget.valueAsNumber}])}/>
                 {spacer}
-                <label for="numberOfDice">Number of Dice</label>
+                <label htmlFor="numberOfDice">Number of Dice</label>
                 <input
                     id="numberOfDice"
                     type="number"
@@ -184,7 +191,7 @@ export const App: FunctionalComponent = () => {
                     onChange={(event) =>
                         dispatch(['updateNumberOfDice', {numberOfDice: event.currentTarget.valueAsNumber}])}/>
                 {spacer}
-                <label for="sidesPerDice">Sides per Dice</label>
+                <label htmlFor="sidesPerDice">Sides per Dice</label>
                 <input
                     id="sidesPerDice"
                     type="number"
@@ -194,7 +201,7 @@ export const App: FunctionalComponent = () => {
                 {spacer}
                 <div style={{display: 'flex', justifyContent: 'center'}}>
                     <span>
-                        <label for="chooseHighest">Choose Highest</label>
+                        <label htmlFor="chooseHighest">Choose Highest</label>
                         <input
                             id="chooseHighest"
                             type="checkbox"
@@ -204,7 +211,7 @@ export const App: FunctionalComponent = () => {
                     </span>
                     {spacer}
                     <span>
-                        <label for="chooseLowest">Choose Lowest</label>
+                        <label htmlFor="chooseLowest">Choose Lowest</label>
                         <input
                             id="chooseLowest"
                             type="checkbox"
@@ -221,30 +228,38 @@ export const App: FunctionalComponent = () => {
                 </div>
             </form>
             {spacer}
-            {divider}
-            {spacer}
-            <div style={{display: 'flex'}}>
-                {histogram.map(([value, count]) => {
-                    if ([value, count].some(isNaN)) return <></>
-                    return <div style={{
-                        textAlign: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'flex-end'
-                    }}>
-                        <div>{count}</div>
-                        <div style={{
-                            backgroundColor: 'gray',
-                            width: '20px',
-                            height: `${200 * count / state.numberOfRolls}px`
-                        }}></div>
-                        <div style={{width: '20px'}}>{value}</div>
-                    </div>
-                })}
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+                    <span>
+                        <label htmlFor="horizontalHistogram">Horizontal</label>
+                        <input
+                            id="horizontalHistogram"
+                            type="checkbox"
+                            checked={state.histogramView == 'horizontal'}
+                            onChange={(event) =>
+                                dispatch(['updateHistogramView', {histogramView: event.currentTarget.checked ? 'horizontal' : 'vertical'}])}/>
+                    </span>
+                {spacer}
+                <span>
+                        <label htmlFor="verticalHistogram">Vertical</label>
+                        <input
+                            id="verticalHistogram"
+                            type="checkbox"
+                            checked={state.histogramView == 'vertical'}
+                            onChange={(event) =>
+                                dispatch(['updateHistogramView', {histogramView: event.currentTarget.checked ? 'vertical' : 'horizontal'}])}/>
+                    </span>
             </div>
+
+            {spacer}
+            {divider}
             {isNaN(expectedValue)
                 ? <></>
                 : <div>Expected Value: {expectedValue.toFixed(2)}</div>}
+            {spacer}
+            {histogram.length
+                ? <h3><u>Values Rolled</u></h3>
+                : <></>}
+            <HistogramView state={state} histogram={histogram}/>
         </div>
     )
 }
